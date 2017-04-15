@@ -14,66 +14,83 @@ connection.connect(function (err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId);
     start();
+
 });
 
 //========================================
 
 function start() {
 
-    connection.query("SELECT * FROM products", function (err, res) {
-        if (err) throw err;
-        console.log(res);
-        console.log(" ");
+    function viewInventory() {
+        connection.query("SELECT * FROM products", function (err, res) {
+            if (err) throw err;
+            console.log(res);
+            console.log(" ");
+        })
+    }
 
-        enterOrder();
-    });
+    function lowInventory() {
+        connection.query("SELECT * FROM products", function (err, res) {
+            if (err) throw err;
+            for (var i = 0; i < res.length; i++) {
+                if (res[i].stock_quantity < 5) {
+                    console.log(res[i]);
+                    connection.end();
+                }
+                else {
+                    console.log("No inventory below 5 units.");
+                    connection.end();
+                }
+            }
+        })
+    };
 
-// Customer enteres order:
-    function enterOrder() {
+    function addInventory() {
         inquirer.prompt([
             {
                 name: "item",
                 type: "input",
-                message: "Enter the product ID (1-10): "
+                message: "ID# of item to update: "
             }, {
                 name: "quantity",
                 type: "input",
-                message: "Enter quanity: "
-            },
-        ]).then(function (order) {
-            console.log("Item # " + order.item);
-            console.log("Qty ordered: " + order.quantity);
+                message: "Units to add "
+            }
+        ]).then(function (answer) {
 
             var stockCheck = "SELECT * FROM products WHERE ? ";
-
             connection.query(stockCheck, { item_id: order.item }, function (err, res) {
                 console.log(res);
                 // console.log(res[0].stock_quantity);
                 if (err) {
                     console.log(err);
                 }
-// Customer order exceeds stock:
-                if (res[0].stock_quantity < order.quantity) {
-                    console.log("\nInsufficient quantity! Only " + res[0].stock_quantity + " available.");
-                    connection.end();
-                }
-// Customer order is fillable:
                 else {
-                    var newQuantity = res[0].stock_quantity - order.quantity;
-                    var orderPrice = res[0].price * order.quantity;
-
+                    var newQuantity = res[0].stock_quantity + answer.quantity;
                     console.log("Updated quantity: " + newQuantity);
                     connection.query("UPDATE products SET ? WHERE ?", [{
                         stock_quantity: newQuantity
                     }, {
                         item_id: order.item
                     }], function (err, res) {
-                        console.log("Your total comes to $" + parseFloat(orderPrice).toFixed(2))
                         connection.end();
                     })
-                }
+                } // end else
             })
-        })
-    }
-} //end start function
+        } // end then
+            )
+    } // end add inventory
 
+
+
+
+
+
+
+
+
+
+
+
+
+};  // end start
