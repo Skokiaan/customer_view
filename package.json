@@ -1,0 +1,25 @@
+{
+  "name": "customer_view",
+  "version": "1.0.0",
+  "description": "\"Bamazon Storefront\"",
+  "main": "bamazonCustomer.js",
+  "dependencies": {
+    "inquirer": "^3.0.6",
+    "mysql": "^2.13.0",
+    "prompt": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Skokiaan/customer_view.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Skokiaan/customer_view/issues"
+  },
+  "homepage": "https://github.com/Skokiaan/customer_view#readme"
+}
